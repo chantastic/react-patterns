@@ -156,7 +156,7 @@ See: [Cached State in render](#cached-state-in-render) anti-pattern
 
 ## Compound State
 
-Name compound state methods with the `is` or `has` prefix:
+Name compound state methods with the `is` or `has` prefix.
 
 ```coffeescript
 # bad
@@ -170,6 +170,8 @@ isWillingSongParticipant: ->
 hasWorrysomeBehavior: ->
   !@isWillingSongParticipant() and @props.punchesKittens
 ```
+
+These methods should return a `boolean` value.
 
 See: [Compound Conditions](#compound-conditions) anti-pattern
 
