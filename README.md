@@ -182,7 +182,7 @@ renderItems: ->
 
 ## Transclusion and Layouts
 
-Use transclusion to wrap components in layout. Don't create one-off components that merge layout and domain components.
+Use transclusion (i.e., passing children _through_ the component) to wrap components in layout. Don't create one-off components that merge layout and domain components.
 
 ``` coffeescript
 # bad
