@@ -44,7 +44,8 @@ Group methods into logical groups.
 
 * mixins
 * propTypes
-* getters
+* get methods
+* state methods
 * lifecycle events
 * render
 * event handlers
@@ -57,11 +58,11 @@ Person = React.createClass
   propTypes:
     name: React.PropTypes.string
 
-  getDefaultProps: ->
-    name: ''
-
   getInitialState: ->
     smiling: false
+
+  getDefaultProps: ->
+    name: ''
 
   componentWillMount: ->   # add event listeners (Flux Store, WebSocket, document)
 
@@ -81,11 +82,33 @@ Person = React.createClass
 
   # private
 
-  _doSomethingInOutsideMyself: ->
+  _doSomethingUglyOrOutsideMyConcern: ->
     # Concerns with outside objects,
     # dirty or duplicated implementations,
     # etc.
 
+```
+
+Place `get` methods (for [computed props](#computed-props)) after Reacts `getInitialState` and `getDefaultProps`.
+
+Place `has` and `is` methods (for [compound state](#compound-state)) after that, respectively.
+
+```coffeescript
+Person = React.createClass
+  getInitialState: ->
+    ...
+
+  getDefaultProps: ->
+    ...
+
+  getFormattedBirthDate: ->
+    ...
+
+  hasHighExpectations: ->
+    ...
+
+  isLikelyToBeDissapointedWithSurprisePartyEfforts: ->
+    ...
 ```
 
 **[⬆ back to top](#table-of-contents)**
