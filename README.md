@@ -24,6 +24,8 @@ React
   1. [Naming Events](#naming-events)
   1. [Using PropTypes](#using-proptypes)
   1. [Using Entities](#using-entities)
+1. Add-ons
+  1. [ClassSet](#classset)
 1. [JSX](#jsx)
 
 ---
@@ -419,6 +421,36 @@ Use Reacts `String.fromCharCode()` for special characters.
     React.DOM.div(null, 'PiCO ' + String.fromCharCode(183) + ' Mascot')
 
 Read: [JSX Gotchas](http://facebook.github.io/react/docs/jsx-gotchas.html#html-entities)
+
+**[⬆ back to top](#table-of-contents)**
+
+## classSet
+
+Use the `classSet()` add-on to manage conditional classes in your app:
+
+
+```coffeescript
+# bad
+render: ->
+  React.DOM.div
+    className: @getClassName()
+
+getClassName: ->
+  claasses = ['MyComponent']
+  classes.push('MyComponent--active') if @state.active
+  classes.join(' ')
+
+# good
+render: ->
+  classes =
+    'MyComponent': true
+    'MyComponent--active': @state.active
+
+  React.DOM.div
+    className: React.addons.classSet(classes)
+```
+
+Read: [Class Name Manipulation](http://facebook.github.io/react/docs/class-name-manipulation.html)
 
 **[⬆ back to top](#table-of-contents)**
 
