@@ -346,6 +346,13 @@ render: ->
 handleClick: ->
 ```
 
+Handler names should:
+
+- begin with `handle`
+- end with the name of the event they handle (eg, `Click`, `Change`)
+- include disambuating information, if necessary (eg, `handleNameChange` and `handleAgeChange`). If you do this, check whether you should actually be creating another component class.
+- be present-tense
+
 **[⬆ back to top](#table-of-contents)**
 
 ## Naming Events
