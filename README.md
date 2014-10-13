@@ -93,7 +93,7 @@ Person = React.createClass
 
 Place `get` methods ([computed props](#computed-props)) after Reacts `getInitialState` and `getDefaultProps`.
 
-Place `has` and `is` methods ([compound state](#compound-state)) after that, respectively.
+Place `has`/`is`/`can` methods ([compound state](#compound-state)) after that, respectively.
 
 ```coffeescript
 Person = React.createClass
@@ -158,7 +158,7 @@ See: [Cached State in render](#cached-state-in-render) anti-pattern
 
 ## Compound State
 
-Name compound state methods with the `is` or `has` prefix.
+Name compound state methods with the `is`, `has` or `can` prefix.
 
 ```coffeescript
 # bad
@@ -171,6 +171,9 @@ isWillingSongParticipant: ->
 
 hasWorrysomeBehavior: ->
   !@isWillingSongParticipant() and @props.punchesKittens
+
+canPetKittens: ->
+  @hasHands() and @props.kittens.length
 ```
 
 These methods should return a `boolean` value.
