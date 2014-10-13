@@ -34,7 +34,7 @@ React
 
 These patterns and practices are birthed from our experience writing React on Rails.
 
-We weight the trade-off of bloating components with `get` `is` and sub-`render` methods. While they clutter a components public interfaces, they are a huge maintainability win.
+We weight the trade-off of bloating components with `get`, `is` and sub-`render` methods. While they clutter a component's public interface, they are a huge maintainability win.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -91,7 +91,7 @@ Person = React.createClass
 
 ```
 
-Place `get` methods ([computed props](#computed-props)) after Reacts `getInitialState` and `getDefaultProps`.
+Place `get` methods ([computed props](#computed-props)) after React's `getInitialState` and `getDefaultProps`.
 
 Place `has` and `is` methods ([compound state](#compound-state)) after that, respectively.
 
@@ -290,7 +290,7 @@ Do not check existence of `prop` objects.
 ```coffeescript
 #bad
 render: ->
-  if person?.firstName
+  if @props.person?.firstName
     React.DOM.div(null, @props.person.firstName)
   else
     null
@@ -427,7 +427,6 @@ Read: [JSX Gotchas](http://facebook.github.io/react/docs/jsx-gotchas.html#html-e
 ## classSet
 
 Use the `classSet()` add-on to manage conditional classes in your app:
-
 
 ```coffeescript
 # bad
