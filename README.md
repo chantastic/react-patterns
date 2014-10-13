@@ -350,8 +350,9 @@ Handler names should:
 
 - begin with `handle`
 - end with the name of the event they handle (eg, `Click`, `Change`)
-- include disambuating information, if necessary (eg, `handleNameChange` and `handleAgeChange`). If you do this, check whether you should actually be creating another component class.
 - be present-tense
+
+If you need to disambiguate handlers, add additional information between `handle` and the event name. For example, you can distinguish between `onChange` handlers:  `handleNameChange` and `handleAgeChange`. If you do this, check whether you should actually create another component class.
 
 **[⬆ back to top](#table-of-contents)**
 
