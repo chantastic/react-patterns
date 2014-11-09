@@ -24,6 +24,8 @@ React
   1. [Naming Events](#naming-events)
   1. [Using PropTypes](#using-proptypes)
   1. [Using Entities](#using-entities)
+1. Gotchas
+  1. [Tables](#tables)
 1. Add-ons
   1. [ClassSet](#classset)
 1. [JSX](#jsx)
@@ -432,6 +434,30 @@ Use Reacts `String.fromCharCode()` for special characters.
     React.DOM.div(null, 'PiCO ' + String.fromCharCode(183) + ' Mascot')
 
 Read: [JSX Gotchas](http://facebook.github.io/react/docs/jsx-gotchas.html#html-entities)
+
+**[⬆ back to top](#table-of-contents)**
+
+## Tables
+
+The browser thinks you're dumb. But React doesn't. Always use `tbody` in your
+`table` components.
+
+```coffeescript
+# bad
+render: ->
+  React.DOM.table null,
+    React.DOM.tr null, ''
+
+# good
+render: ->
+  React.DOM.table null,
+    React.DOM.tbody null,
+      React.DOM.tr null, ''
+```
+
+The browser is going to insert `tbody` if you forget. React will continue to
+insert new `tr`s into the `table` and confuse the heck out of you. Always use
+`tbody`.
 
 **[⬆ back to top](#table-of-contents)**
 
