@@ -36,7 +36,7 @@ React
 
 These patterns and practices are birthed from our experience writing React on Rails.
 
-We weight the trade-off of bloating components with `get`, `is` and sub-`render` methods. While they clutter a component's public interface, they are a huge maintainability win.
+We weighed the trade-off of bloating components with `get`, `is` and sub-`render` methods. While they clutter a component's public interface, they are a huge maintainability win.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -472,7 +472,7 @@ render: ->
     className: @getClassName()
 
 getClassName: ->
-  claasses = ['MyComponent']
+  classes = ['MyComponent']
   classes.push('MyComponent--active') if @state.active
   classes.join(' ')
 
