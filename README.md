@@ -1,7 +1,7 @@
 React
 =====
 
-*Mostly reasonable patterns for writing React in CoffeeScript.*
+*Mostly reasonable patterns for writing React on Rails*
 
 ## Table of Contents
 
@@ -13,7 +13,7 @@ React
   1. [Computed Props](#computed-props)
   1. [Compound State](#compound-state)
   1. [Sub-render](#sub-render)
-  1. [Transclusion and Layouts](#transclusion-and-layouts)
+  1. [View Components](#view-components)
 1. Anti-patterns
   1. [Compound Conditions](#compound-conditions)
   1. [Cached State in render](#cached-state-in-render)
@@ -29,6 +29,7 @@ React
 1. Add-ons
   1. [ClassSet](#classset)
 1. [JSX](#jsx)
+1. [ES6 Harmony](#es6-harmony)
 
 ---
 
@@ -46,68 +47,78 @@ We weighed the trade-off of bloating components with `get`, `is` and sub-`render
 
 Group methods into logical groups.
 
-* mixins
 * propTypes
 * get methods
 * state methods
 * lifecycle events
-* render
 * event handlers
 * "private" methods
+* render
 
-```coffeescript
-Person = React.createClass
-  mixins: [MammalMixin]
-
-  propTypes:
+```javascript
+var Person = React.createClass({
+  propTypes: {
     name: React.PropTypes.string
+  },
 
-  getInitialState: ->
-    smiling: false
+  getInitialState() {
+    return {
+      smiling: false
+    };
+  },
 
-  getDefaultProps: ->
-    name: ''
+  getDefaultProps() {
+    return {
+      name: 'Guest'
+    };
+  },
 
-  componentWillMount: ->   # add event listeners (Flux Store, WebSocket, document)
+  componentWillMount() {
+    // add event listeners (Flux Store, WebSocket, document, etc.)
+  },
 
-  componentDidMount: ->    # data request (XHR)
+  componentDidMount() {
+    // React.getDOMNode()
+  },
 
-  componentWillUnmount: -> # remove event listeners
+  componentWillUnmount() {
+    // remove event listeners (Flux Store, WebSocket, document, etc.)
+  },
 
-  render: ->
-      React.DOM.div
-        className: 'Person'
-        onClick:   @handleClick,
-          @props.name
-          " is smiling" if @state.smiling
+  handleClick() {
+    this.setState({smiling: !this.state.smiling});
+  },
 
-   handleClick: ->
-     @setState(smiling: !@state.smiling)
+  _doSomethingGross() {
+    // These really aren't private but it's a sign the method could stand
+    // improvement or has unideal implementation.
+  },
 
-  # private
+  render() {
+    retun (
+      <div
+       className="Person"
+       onClick={this.handleClick}>
+        {this.props.name} {this.state.smiling ? "is smiling" : ""}
+      </div>
+    );
+  },
 
-  _doSomethingUglyOrOutsideMyConcern: ->
-    # Concerns with outside objects,
-    # dirty or duplicated implementations,
-    # etc.
-
+});
 ```
 
 Place `get` methods ([computed props](#computed-props)) after React's `getInitialState` and `getDefaultProps`.
 
 Place `has`/`is`/`can` methods ([compound state](#compound-state)) after that, respectively.
 
-```coffeescript
-Person = React.createClass
-  getInitialState: ->
-
-  getDefaultProps: ->
-
-  getFormattedBirthDate: ->
-
-  hasHighExpectations: ->
-
-  isLikelyToBeDissapointedWithSurprisePartyEfforts: ->
+```javascript
+var Person = React.createClass({
+  getInitialState() {},
+  getDefaultProps() {},
+  getFormattedBirthDate() {},
+  hasHighExpectations() {},
+  isLikelyToBeDissapointedWithSurprisePartyEfforts() {}
+});
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -118,20 +129,25 @@ Wrap props on newlines for exactly 2 or more.
 
 (*Hint*: Don't separate props with commas)
 
-```coffeescript
-# ok
-Person({firstName: "Michael"})
+```html
+// bad
+<Person
+ firstName="Michael" />
 
-# bad
-Person({firstName: "Michael", lastName: "Chan", occupation: "Web Developer", favoriteFood: "Drunken Noodles"})
+// good
+<Person firstName="Michael" />
+```
 
-# good
-Person
-  firstName:    "Michael"
-  lastName:     "Chan"
-  occupation:   "Web Developer"
-  favoriteFood: "Drunken Noodles"
-  onChange:     @handleChange
+```html
+// bad
+<Person firstName="Michael" lastName="Chan" occupation="Designer" favoriteFood="Drunken Noodles" />
+
+// good
+<Person
+ firstName="Michael"
+ lastName="Chan"
+ occupation="Designer"
+ favoriteFood="Drunken Noodles" />
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -142,14 +158,16 @@ Person
 
 Name computed prop methods with the `get` prefix.
 
-```coffeescript
-# bad
-firstAndLastName: ->
-  "#{@props.firstName} #{@props.lastname}"
+```javascript
+  // bad
+  firstAndLastName() {
+    return `${this.props.firstName} ${this.props.lastname}`;
+  }
 
-# good
-getFullName: ->
-  "#{@props.firstName} #{@props.lastname}"
+  // good
+  getFullName() {
+    return `${this.props.firstName} ${this.props.lastname}`;
+  }
 ```
 
 See: [Cached State in render](#cached-state-in-render) anti-pattern
@@ -162,20 +180,26 @@ See: [Cached State in render](#cached-state-in-render) anti-pattern
 
 Name compound state methods with the `is`, `has` or `can` prefix.
 
-```coffeescript
-# bad
-happyAndKnowsIt: ->
-  @state.happy and @state.knowsIt
+```javascript
+// bad
+happyAndKnowsIt() {
+  return this.state.happy && this.state.knowsIt;
+}
+```
 
-# good
-isWillingSongParticipant: ->
-  @state.happy and @state.knowsIt
+```javascript
+// good
+isWillingSongParticipant() {
+  return this.state.happy && this.state.knowsIt;
+},
 
-hasWorrysomeBehavior: ->
-  !@isWillingSongParticipant() and @props.punchesKittens
+hasWorrysomeBehavior() {
+  return !this.isWillingSongParticipant() && this.props.punchesKittens;
+},
 
-canPetKittens: ->
-  @hasHands() and @props.kittens.length
+canPetKittens() {
+  return this.hasHands() && this.props.kittens.length;
+}
 ```
 
 These methods should return a `boolean` value.
@@ -188,48 +212,65 @@ See: [Compound Conditions](#compound-conditions) anti-pattern
 
 Use sub-`render` methods to isolate logical chunks of component UI.
 
-```coffeescript
-# good
-render: ->
-  createItem = (itemText) ->
-    React.DOM.li(null, itemText)
+```javascript
+// bad
+render() {
+  return <div>{this.props.name} {this.state.smiling ? "is smiling" : ""}</div>;
+}
+```
 
-  React.DOM.ul(null, @props.items.map(createItem))
+```javascript
+// good
+renderSmilingStatement() {
+  if (this.state.isSmiling) {
+    return "is smiling";
+  }
 
-# better
-render: ->
-  React.DOM.ul(null, @renderItems())
+  return "";
+},
 
-renderItems: ->
-  for itemText in @props.items
-    React.DOM.li(null, itemText)
+render() {
+  return <div>{this.props.name} {this.renderSmilingStatement()}</div>;
+}
 ```
 
 **[⬆ back to top](#table-of-contents)**
 
-## Transclusion and Layouts
+## View Components
 
-Use transclusion (i.e., passing children _through_ the component) to wrap components in layout. Don't create one-off components that merge layout and domain components.
+Compose components into views. Don't create one-off components that merge layout
+and domain components.
 
-``` coffeescript
-# bad
-PeopleWrappedInBSRow = React.createClass
-  render: ->
-    React.DOM.div className: 'row',
-      People people: @state.people
+```javascript
+// bad
+var PeopleWrappedInBSRow = React.createClass({
+  render() {
+    return (
+      <div className="row">
+        <People people={this.state.people} />
+      </div>
+    );
+  }
+});
+```
 
-# good
-BSRow = React.createClass
-  render: ->
-    React.DOM.div
-      className: 'row'
-        @props.children
+```javascript
+// good
+var BSRow = React.createClass({
+  render() {
+    return <div className="row">{this.props.children}</div>;
+  }
+});
 
-SomeHigherView = React.createClass
-  render: ->
-    React.DOM.div null,
-      BSRow null,
-        People(people: @state.people),
+var SomeView = React.createClass({
+  render() {
+    return (
+      <BSRow>
+        <People people={this.state.people} />
+      </BSRow>
+    );
+  }
+});
 ```
 
 This works nicely for complex components—like Tabs or Tables—where you you might
@@ -243,22 +284,28 @@ need to iterate over children and place them within a complex layout.
 
 Do not keep state in `render`
 
-```coffeescript
-# bad
-render: ->
-  name = 'Mr. ' + @props.name
-  React.DOM.div(null, name)
+```javascript
+// bad
+render() {
+  var name = 'Mrs. ' + this.props.name;
+  return <div>{name}</div>;
+}
 
-# good
-render: ->
-  React.DOM.div(null, 'Mr. ' + @props.name)
+// good
+render() {
+  return <div>{'Mrs. ' + this.props.name}</div>;
+}
+```
 
-# good (complex example)
-getFormattedBirthDate: ->
-  moment(@props.user.bday).format(LL);
+```javascript
+// best
+getFancyName() {
+  return `Mrs. ${this.props.name}`;
+},
 
-render: ->
-  React.DOM.div(null, @getFormattedBirthDate())
+render() {
+  return <div>{this.getFancyName()}</div>;
+}
 ```
 
 See: [Computed Props](#computed-props) pattern
@@ -269,20 +316,44 @@ See: [Computed Props](#computed-props) pattern
 
 Do not put compound conditions in `render`.
 
-```coffeescript
-#bad
-render: ->
-  if @state.happy and @state.knowsIt
-    React.DOM.div(null, "Knows what it's all about.")
-
-#good
-isLikeTotallyHappy: ->
-  @state.happy and @state.knowsIt
-
-render: ->
-  if @isLikeTotallyHappy()
-    React.DOM.div(null, "Knows what it's all about.")
+```javascript
+// bad
+render() {
+  return <div>{if (this.state.happy && this.state.knowsIt) { return "Clapping
+hands" }</div>;
+}
 ```
+
+```javascript
+// better
+isTotallyHappy() {
+  return this.state.happy && this.state.knowsIt;
+},
+
+render() {
+  return <div>{if (this.isTotallyHappy() { return "Clapping hands" }}</div>;
+}
+```
+
+```javascript
+// betterer
+getHappinessMessage() {
+  if (this.isTotallyHappy()) {
+    return "Clapping hands";
+  }
+},
+
+isTotallyHappy() {
+  return this.state.happy && this.state.knowsIt;
+},
+
+render() {
+  return <div>{this.getHappinessMessage()}</div>;
+}
+```
+
+The best solution for this would use a container component to manage state and
+pass new state down as props.
 
 See: [Compound State](#compound-state) pattern
 
@@ -292,22 +363,34 @@ See: [Compound State](#compound-state) pattern
 
 Do not check existence of `prop` objects.
 
-```coffeescript
-#bad
-render: ->
-  if @props.person?.firstName
-    React.DOM.div(null, @props.person.firstName)
-  else
-    null
-
-#good
-getDefaultProps: ->
-  person:
-    firstName: ''
-
-render: ->
-  React.DOM.div(null, @props.person.firstName)
+```javascript
+// bad
+render() {
+  if (this.props.person) {
+    return <div>{this.props.person.firstName}</div>;
+  } else {
+    return null;
+  }
+}
 ```
+
+```javascript
+// good
+getDefaultProps() {
+  return {
+    person: {
+      firstName: 'Guest'
+    }
+  };
+},
+
+render() {
+  return <div>{this.props.person.firstName}</div>;
+}
+```
+
+This is only where objects or arrays are used. Use PropTypes.shape to clarify
+the types of nested data expected by the component.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -315,14 +398,30 @@ render: ->
 
 Do not set state from props without obvious intent.
 
-```coffeescript
-#bad
-getInitialState: ->
-  items: @props.items
+```javascript
+// bad
+propTypes: {
+  items: React.PropTypes.array
+},
 
-#good
-getInitialState: ->
-  items: @props.initialItems
+getInitialState() {
+  return {
+    items: this.props.items
+  };
+}
+```
+
+```javascript
+// good
+propTypes: {
+  initialItems: React.PropTypes.array
+},
+
+getInitialState() {
+  return {
+    items: this.props.initialItems
+  };
+}
 ```
 
 Read: ["Props is getInitialState Is an Anti-Pattern"](http://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html)
@@ -335,20 +434,22 @@ Read: ["Props is getInitialState Is an Anti-Pattern"](http://facebook.github.io/
 
 Name the handler methods after their triggering event.
 
-```CoffeeScript
-# bad
-render: ->
-  React.DOM.div
-    onClick: @punchABadger
+```javascript
+// bad
+punchABadger() {},
 
-punchABadger: ->
+render() {
+  return <div onClick={this.punchABadger}> ... </div>;
+}
+```
 
-# good
-render: ->
-  React.DOM.div
-    onClick: @handleClick
+```javascript
+// good
+handleClick() {},
 
-handleClick: ->
+render() {
+  return <div onClick={this.handleClick}> ... </div>;
+}
 ```
 
 Handler names should:
@@ -357,7 +458,10 @@ Handler names should:
 - end with the name of the event they handle (eg, `Click`, `Change`)
 - be present-tense
 
-If you need to disambiguate handlers, add additional information between `handle` and the event name. For example, you can distinguish between `onChange` handlers:  `handleNameChange` and `handleAgeChange`. If you do this, check whether you should actually create another component class.
+If you need to disambiguate handlers, add additional information between
+`handle` and the event name. For example, you can distinguish between `onChange`
+handlers:  `handleNameChange` and `handleAgeChange`. If you do this, ask
+yourself if you should create another component class.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -365,21 +469,32 @@ If you need to disambiguate handlers, add additional information between `handle
 
 Use custom event names for components Parent-Child event listeners.
 
-```coffeescript
-Parent = React.createClass
-  render: ->
-    React.DOM.div
-      className: 'Parent'
-        Child(onCry: handleCry) # custom event `cry`
+```javascript
+var Parent = React.createClass({
+  handleCry() {
+    // handle Child's cry
+  },
 
-  handleCry: ->
-    # handle childs' cry
+  render() {
+    return (
+      <div className="Parent">
+        <Child onCry={this.handleCry} />
+      </div>
+    );
+  }
+});
 
-Child = React.createClass
-  render: ->
-    React.DOM.div
-      className: 'Child'
-      onChange:  @props.onCry # React DOM event
+var Child = React.createClass({
+  render() {
+    return (
+      <div
+       className="Child"
+       onChange={this.props.onCry}>
+        ...
+      </div>
+    );
+  }
+});
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -388,32 +503,40 @@ Child = React.createClass
 
 Use PropTypes to communicate expectations and log meaningful warnings.
 
-```coffeescript
-MyValidatedComponent = React.createClass
-  propTypes:
+```javascript
+var MyValidatedComponent = React.createClass({
+  propTypes: {
     name: React.PropTypes.string
+  },
+
+  ...
+});
 ```
 This component will log a warning if it receives `name` of a type other than `string`.
 
 
-```coffeescript
-Person({name: 1337})
-# Warning: Invalid prop `name` of type `number` supplied to `MyValidatedComponent`, expected `string`.
+```html
+<Person name=1337 />
+// Warning: Invalid prop `name` of type `number` supplied to `MyValidatedComponent`, expected `string`.
 ```
 
 Components may require `props`
 
-```coffeescript
-MyValidatedComponent = React.createClass
-  propTypes:
+```javascript
+var MyValidatedComponent = React.createClass({
+  propTypes: {
     name: React.PropTypes.string.isRequired
+  },
+
+  ...
+});
 ```
 
 This component will now validate the presence of name.
 
-```
-Person()
-# Warning: Required prop `name` was not specified in `Person`
+```html
+<Person />
+// Warning: Required prop `name` was not specified in `Person`
 ```
 
 Read: [Prop Validation](http://facebook.github.io/react/docs/reusable-components.html#prop-validation)
@@ -422,16 +545,21 @@ Read: [Prop Validation](http://facebook.github.io/react/docs/reusable-components
 
 ## Using Entities
 
-Use Reacts `String.fromCharCode()` for special characters.
+Use React's `String.fromCharCode()` for special characters.
 
-    # bad
-    React.DOM.div(null, 'PiCO · Mascot')
+```javascript
+// bad
+<div>PiCO · Mascot</div>
 
-    # nope
-    React.DOM.div(null, 'PiCO &middot; Mascot')
+// nope
+<div>PiCO &middot; Mascot</div>
 
-    # good
-    React.DOM.div(null, 'PiCO ' + String.fromCharCode(183) + ' Mascot')
+// good
+<div>{'PiCO ' + String.fromCharCode(183) + ' Mascot'}</div>
+
+// better
+<div>{`PiCO ${String.fromCharCode(183)} Mascot`}</div>
+```
 
 Read: [JSX Gotchas](http://facebook.github.io/react/docs/jsx-gotchas.html#html-entities)
 
@@ -442,17 +570,26 @@ Read: [JSX Gotchas](http://facebook.github.io/react/docs/jsx-gotchas.html#html-e
 The browser thinks you're dumb. But React doesn't. Always use `tbody` in your
 `table` components.
 
-```coffeescript
-# bad
-render: ->
-  React.DOM.table null,
-    React.DOM.tr null, ''
+```javascript
+// bad
+render() {
+  return (
+    <table>
+      <tr>...</tr>
+    </table>
+  );
+}
 
-# good
-render: ->
-  React.DOM.table null,
-    React.DOM.tbody null,
-      React.DOM.tr null, ''
+// good
+render() {
+  return (
+    <table>
+      <tbody>
+        <tr>...</tr>
+      </tbody>
+    </table>
+  );
+}
 ```
 
 The browser is going to insert `tbody` if you forget. React will continue to
@@ -463,27 +600,40 @@ insert new `tr`s into the `table` and confuse the heck out of you. Always use
 
 ## classSet
 
-Use the `classSet()` add-on to manage conditional classes in your app:
+**NOTE: the classSet addon has been deprecated. Use classNames instead on 
+[NPM](https://www.npmjs.com/package/classnames) and
+[Bower](https://github.com/JedWatson/classnames).**
 
-```coffeescript
-# bad
-render: ->
-  React.DOM.div
-    className: @getClassName()
+Use `classNames()` to manage conditional classes in your app:
 
-getClassName: ->
-  classes = ['MyComponent']
-  classes.push('MyComponent--active') if @state.active
-  classes.join(' ')
+```javascript
+// bad
+render() {
+  var classes = ['MyComponent'];
+  if (this.state.active) {
+    classes.push('MyComponent--active');
+  }
 
-# good
-render: ->
-  classes =
-    'MyComponent': true
-    'MyComponent--active': @state.active
+  return <div className={classes.join(' ')} />;
+},
 
-  React.DOM.div
-    className: React.addons.classSet(classes)
+getClassName() {
+  var classes = ['MyComponent'];
+  if (this.state.active) {
+    classes.push('MyComponent--active');
+  }
+  return classes.join(' ');
+}
+
+// good
+render() {
+  var classes = {
+    'MyComponent': true,
+    'MyComponent--active': this.state.active
+  };
+
+  <div className={classNames(classes)} />;
+}
 ```
 
 Read: [Class Name Manipulation](http://facebook.github.io/react/docs/class-name-manipulation.html)
@@ -492,27 +642,24 @@ Read: [Class Name Manipulation](http://facebook.github.io/react/docs/class-name-
 
 ## JSX
 
-Don't use JSX or CJSX in CoffeeScript.
+We used to have some hardcore CoffeeScript lovers is the group. The unfortunate
+thing about writing templates in CoffeeScript is that it leaves you on the hook
+when certain implementations change that JSX would normally abstract.
 
-```coffeescript
-# bad
-render: ->
-  `(
-    <div
-     className: "noJSX"
-     orClick:   {@handleClick}>
-      Save the children.
-    </div>
-   )`
+We no longer recommend using CoffeeScript to write templates.
 
-#good
-render: ->
-  React.DOM.div
-    className: "noJSX"
-    onClick:   @handleClick,
-      'Save the children.'
-```
+For posterity, you can read about how we used CoffeeScript for templates, when
+using CoffeeScript was non-negotiable: [CoffeeScript and JSX](https://slack-files.com/T024L9M0Y-F02HP4JM3-80d714).
 
-Read: [CoffeeScript and JSX](https://slack-files.com/T024L9M0Y-F02HP4JM3-80d714) for more on our decision to avoid JSX.
+**[⬆ back to top](#table-of-contents)**
+
+## ES6 Harmony
+
+These examples use the
+[`harmony` option on react-rails](https://github.com/reactjs/react-rails#jsx)
+for ES6/ES2015 sugar. Examples use the `createClass` API over `React.Component`
+for consistency with the official documentation.
+
+ES6 implementation in jstransform is limited.
 
 **[⬆ back to top](#table-of-contents)**
