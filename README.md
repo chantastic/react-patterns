@@ -5,7 +5,7 @@ React
 
 ## Table of Contents
 
-1. [Caveat](#caveat)
+1. [Scope](#scope)
 1. Organization
   1. [Component Organization](#component-organization)
   1. [Formatting Props](#formatting-props)
@@ -28,16 +28,21 @@ React
   1. [Tables](#tables)
 1. Add-ons
   1. [ClassSet](#classset)
-1. [JSX](#jsx)
-1. [ES6 Harmony](#es6-harmony)
+1. Other
+  1. [JSX](#jsx)
+  1. [ES6 Harmony](#es6-harmony)
+  1. [react-rails](#react-rails)
+  1. [rails-assets](#rails-assets)
+  1. [flux](#flux)
 
 ---
 
-## Caveat
+## Scope
 
-These patterns and practices are birthed from our experience writing React on Rails.
-
-We weighed the trade-off of bloating components with `get`, `is` and sub-`render` methods. While they clutter a component's public interface, they are a huge maintainability win.
+This is how we write [React.js](https://facebook.github.io/react/) on Rails.
+We've struggled to find the happy path. Recommendations here represent a good
+number of failed attempts. If something seems out of place, it probably is;
+let us know what you've found.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -661,5 +666,33 @@ for ES6/ES2015 sugar. Examples use the `createClass` API over `React.Component`
 for consistency with the official documentation.
 
 ES6 implementation in jstransform is limited.
+
+**[⬆ back to top](#table-of-contents)**
+
+## react-rails
+
+[react-rails](https://github.com/reactjs/react-rails) should be used in all
+Rails apps that use React. It provides the perfect amount of glue between Rails
+conventions and React.
+
+**[⬆ back to top](#table-of-contents)**
+
+## rails-assets
+[rails-assets](https://rails-assets.org) should be considered for bundling
+js/css assets into your applications. The most popular React-libraries we use
+are registered on [Bower](http://bower.io) and can be easily added through
+Bundler and react-assets.
+
+**caveats: rails-assets gives you access to bower projects via Sprockets
+requires. This is a win for the traditionally hand-wavy approach that Rails
+takes with JavaScript. This approach does buy you modularity or the ability to
+interop with JS tooling that requires modularity.**
+
+**[⬆ back to top](#table-of-contents)**
+
+## flux
+
+Use [Alt](http://alt.js.org) for flux implementation. Alt is true to the flux
+pattern with the best documentation available.
 
 **[⬆ back to top](#table-of-contents)**
