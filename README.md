@@ -294,11 +294,10 @@ need to iterate over children and place them within a complex layout.
 ```javascript
 // CommentList.js
 
-class CommentList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { comments: [] }
-  }
+var CommentList = React.createClass({
+  getInitialState() {
+    return { comments: [] }
+  },
 
   componentDidMount() {
     $.ajax({
@@ -308,16 +307,16 @@ class CommentList extends React.Component {
         this.setState({comments: comments});
       }.bind(this)
     });
-  }
+  },
 
   render() {
     return <ul> {this.state.comments.map(renderComment)} </ul>;
-  }
+  },
 
   renderComment({body, author}) {
     return <li>{body}—{author}</li>;
   }
-}
+});
 ```
 
 #### Good
@@ -325,29 +324,24 @@ class CommentList extends React.Component {
 ```javascript
 // CommentList.js
 
-class CommentList extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
+var CommentList = React.createClass({
   render() {
     return <ul> {this.props.comments.map(renderComment)} </ul>;
-  }
+  },
 
   renderComment({body, author}) {
     return <li>{body}—{author}</li>;
   }
-}
+});
 ```
 
 ```javascript
 // CommentListContainer.js
 
-class CommentListContainer extends React.Component {
-  constructor() {
-    super();
-    this.state = { comments: [] }
-  }
+var CommentListContainer = React.createClass({
+  getInitialState() {
+    return { comments: [] }
+  },
 
   componentDidMount() {
     $.ajax({
@@ -357,12 +351,12 @@ class CommentListContainer extends React.Component {
         this.setState({comments: comments});
       }.bind(this)
     });
-  }
+  },
 
   render() {
     return <CommentList comments={this.state.comments} />;
   }
-}
+});
 ```
 
 [Read more](https://medium.com/@learnreact/container-components-c0e67432e005)  
