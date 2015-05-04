@@ -94,6 +94,10 @@ var Person = React.createClass({
     this.setState({smiling: !this.state.smiling});
   },
 
+  renderSmilingStatement() {
+    return this.state.smiling ? 'is smiling' : ''
+  },
+
   _doSomethingGross() {
     // These really aren't private but it's a sign the method could stand
     // improvement or has unideal implementation.
@@ -104,11 +108,10 @@ var Person = React.createClass({
       <div
        className="Person"
        onClick={this.handleClick}>
-        {this.props.name} {this.state.smiling ? "is smiling" : ""}
+        {this.props.name} {this.renderSmilingStatement()}
       </div>
     );
   },
-
 });
 ```
 
@@ -605,7 +608,7 @@ insert new `tr`s into the `table` and confuse the heck out of you. Always use
 
 ## classSet
 
-**NOTE: the classSet addon has been deprecated. Use classNames instead on 
+**NOTE: the classSet addon has been deprecated. Use classNames instead on
 [NPM](https://www.npmjs.com/package/classnames) and
 [Bower](https://github.com/JedWatson/classnames).**
 
