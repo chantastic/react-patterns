@@ -14,6 +14,7 @@ React
   1. [Compound State](#compound-state)
   1. [Sub-render](#sub-render)
   1. [View Components](#view-components)
+  1. [Container Components](#container-components)
 1. Anti-patterns
   1. [Compound Conditions](#compound-conditions)
   1. [Cached State in render](#cached-state-in-render)
@@ -283,6 +284,86 @@ need to iterate over children and place them within a complex layout.
 
 **[⬆ back to top](#table-of-contents)**
 
+## Container Components
+
+> A container does data fetching and then renders its corresponding
+> sub-component. That's it. &mdash; Jason Bonta
+
+#### Bad
+
+```javascript
+// CommentList.js
+
+var CommentList = React.createClass({
+  getInitialState() {
+    return { comments: [] }
+  },
+
+  componentDidMount() {
+    $.ajax({
+      url: "/my-comments.json",
+      dataType: 'json',
+      success: function(comments) {
+        this.setState({comments: comments});
+      }.bind(this)
+    });
+  },
+
+  render() {
+    return <ul> {this.state.comments.map(renderComment)} </ul>;
+  },
+
+  renderComment({body, author}) {
+    return <li>{body}—{author}</li>;
+  }
+});
+```
+
+#### Good
+
+```javascript
+// CommentList.js
+
+var CommentList = React.createClass({
+  render() {
+    return <ul> {this.props.comments.map(renderComment)} </ul>;
+  },
+
+  renderComment({body, author}) {
+    return <li>{body}—{author}</li>;
+  }
+});
+```
+
+```javascript
+// CommentListContainer.js
+
+var CommentListContainer = React.createClass({
+  getInitialState() {
+    return { comments: [] }
+  },
+
+  componentDidMount() {
+    $.ajax({
+      url: "/my-comments.json",
+      dataType: 'json',
+      success: function(comments) {
+        this.setState({comments: comments});
+      }.bind(this)
+    });
+  },
+
+  render() {
+    return <CommentList comments={this.state.comments} />;
+  }
+});
+```
+
+[Read more](https://medium.com/@learnreact/container-components-c0e67432e005)  
+[Watch more](https://www.youtube.com/watch?v=KYzlpRvWZ6c&t=1351)
+
+**[⬆ back to top](#table-of-contents)**
+
 ---
 
 ## Cached State in `render`
@@ -357,7 +438,8 @@ render() {
 }
 ```
 
-The best solution for this would use a container component to manage state and
+The best solution for this would use a [container
+component](#container-components) to manage state and
 pass new state down as props.
 
 See: [Compound State](#compound-state) pattern
