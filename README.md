@@ -101,7 +101,7 @@ var Person = React.createClass({
   },
 
   render() {
-    retun (
+    return (
       <div
        className="Person"
        onClick={this.handleClick}>
