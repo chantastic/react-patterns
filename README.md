@@ -511,7 +511,7 @@ getInitialState() {
 }
 ```
 
-Read: ["Props is getInitialState Is an Anti-Pattern"](http://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html)
+Read: ["Props in getInitialState Is an Anti-Pattern"](http://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html)
 
 **[⬆ back to top](#table-of-contents)**
 
