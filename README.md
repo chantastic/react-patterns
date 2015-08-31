@@ -45,86 +45,69 @@ We've struggled to find the happy path. Recommendations here represent a good
 number of failed attempts. If something seems out of place, it probably is;
 let us know what you've found.
 
+All examples written in ES2015 syntax now that the
+[official react-rails gem](https://github.com/reactjs/react-rails) ships with
+[babel](http://babeljs.io/).
+
 **[⬆ back to top](#table-of-contents)**
 
 ---
 
 ## Component Organization
 
-Group methods into logical groups.
-
-* propTypes
-* get methods
-* state methods
-* lifecycle events
-* event handlers
-* "private" methods
-* render
+* class definition
+  * constructor
+    * event handlers
+  * 'component' lifecycle events
+  * getters
+  * render
+* defaultProps
+* proptypes
 
 ```javascript
-var Person = React.createClass({
-  propTypes: {
-    name: React.PropTypes.string
-  },
+class Person extends React.Component {
+  constructor (props) {
+    super(props);
 
-  getInitialState() {
-    return {
-      smiling: false
+    this.state = { smiling: false };
+
+    this.handleClick = () => {
+      this.setState({smiling: !this.state.smiling});
     };
-  },
+  }
 
-  getDefaultProps() {
-    return {
-      name: 'Guest'
-    };
-  },
-
-  componentWillMount() {
+  componentWillMount () {
     // add event listeners (Flux Store, WebSocket, document, etc.)
   },
 
-  componentDidMount() {
+  componentDidMount () {
     // React.getDOMNode()
   },
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     // remove event listeners (Flux Store, WebSocket, document, etc.)
   },
 
-  handleClick() {
-    this.setState({smiling: !this.state.smiling});
-  },
+  get smilingMessage () {
+    return (this.state.smiling) ? "is smiling" : "";
+  }
 
-  _doSomethingGross() {
-    // These really aren't private but it's a sign the method could stand
-    // improvement or has unideal implementation.
-  },
-
-  render() {
+  render () {
     return (
-      <div
-       className="Person"
-       onClick={this.handleClick}>
-        {this.props.name} {this.state.smiling ? "is smiling" : ""}
+      <div onClick={this.handleClick}>
+        {this.props.name} {this.smilingMessage}
       </div>
     );
   },
+}
 
-});
-```
+Person.defaultProps = {
+  name: 'Guest'
+};
 
-Place `get` methods ([computed props](#computed-props)) after React's `getInitialState` and `getDefaultProps`.
-
-Place `has`/`is`/`can` methods ([compound state](#compound-state)) after that, respectively.
-
-```javascript
-var Person = React.createClass({
-  getInitialState() {},
-  getDefaultProps() {},
-  getFormattedBirthDate() {},
-  hasHighExpectations() {},
-  isLikelyToBeDissapointedWithSurprisePartyEfforts() {}
-});
+Person.propTypes = {
+  name: React.PropTypes.string
+};
 ```
 
 **[⬆ back to top](#table-of-contents)**
