@@ -601,12 +601,12 @@ Read: [JSX Gotchas](http://facebook.github.io/react/docs/jsx-gotchas.html#html-e
 
 ## Tables
 
-The browser thinks you're dumb. But React doesn't. Always use `tbody` in your
+The browser thinks you're dumb. But React doesn't. Always use `tbody` in
 `table` components.
 
 ```javascript
 // bad
-render() {
+render () {
   return (
     <table>
       <tr>...</tr>
@@ -615,7 +615,7 @@ render() {
 }
 
 // good
-render() {
+render () {
   return (
     <table>
       <tbody>
