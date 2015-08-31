@@ -381,41 +381,23 @@ See: [Computed Props](#computed-props) pattern
 
 ## Compound Conditions
 
-Do not put compound conditions in `render`.
+Don't put compound conditions in `render`.
 
 ```javascript
 // bad
-render() {
-  return <div>{if (this.state.happy && this.state.knowsIt) { return "Clapping
-hands" }</div>;
+render () {
+  return <div>{if (this.state.happy && this.state.knowsIt) { return "Clapping hands" }</div>;
 }
 ```
 
 ```javascript
 // better
-isTotallyHappy() {
+get isTotesHappy() {
   return this.state.happy && this.state.knowsIt;
 },
 
 render() {
-  return <div>{if (this.isTotallyHappy() { return "Clapping hands" }}</div>;
-}
-```
-
-```javascript
-// betterer
-getHappinessMessage() {
-  if (this.isTotallyHappy()) {
-    return "Clapping hands";
-  }
-},
-
-isTotallyHappy() {
-  return this.state.happy && this.state.knowsIt;
-},
-
-render() {
-  return <div>{this.getHappinessMessage()}</div>;
+  return <div>{(this.isTotesHappy && "Clapping hands" }</div>;
 }
 ```
 
