@@ -450,11 +450,7 @@ Do not set state from props without obvious intent.
 
 ```javascript
 // bad
-propTypes: {
-  items: React.PropTypes.array
-},
-
-getInitialState() {
+getInitialState () {
   return {
     items: this.props.items
   };
@@ -463,11 +459,7 @@ getInitialState() {
 
 ```javascript
 // good
-propTypes: {
-  initialItems: React.PropTypes.array
-},
-
-getInitialState() {
+getInitialState () {
   return {
     items: this.props.initialItems
   };
