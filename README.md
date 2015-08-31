@@ -165,31 +165,23 @@ See: [Cached State in render](#cached-state-in-render) anti-pattern
 
 ## Compound State
 
-Name compound state methods with the `is`, `has` or `can` prefix.
+Prefix compound state getters with a verb for readability.
 
 ```javascript
 // bad
-happyAndKnowsIt() {
+happyAndKnowsIt () {
   return this.state.happy && this.state.knowsIt;
 }
 ```
 
 ```javascript
 // good
-isWillingSongParticipant() {
+get isHappyAndKnowsIt () {
   return this.state.happy && this.state.knowsIt;
-},
-
-hasWorrysomeBehavior() {
-  return !this.isWillingSongParticipant() && this.props.punchesKittens;
-},
-
-canPetKittens() {
-  return this.hasHands() && this.props.kittens.length;
 }
 ```
 
-These methods should return a `boolean` value.
+These methods *MUST* return a `boolean` value.
 
 See: [Compound Conditions](#compound-conditions) anti-pattern
 
