@@ -12,7 +12,7 @@ React
 1. Patterns
   1. [Computed Props](#computed-props)
   1. [Compound State](#compound-state)
-  1. [Sub-render](#sub-render)
+  1. [prefer-ternary-to-sub-render](#prefer-ternary-to-sub-render)
   1. [View Components](#view-components)
   1. [Container Components](#container-components)
 1. Anti-patterns
@@ -187,31 +187,36 @@ See: [Compound Conditions](#compound-conditions) anti-pattern
 
 **[⬆ back to top](#table-of-contents)**
 
-## Sub-render
+## Prefer Ternary to Sub-render
 
-Use sub-`render` methods to isolate logical chunks of component UI.
+Keep login inside the `render`.
 
 ```javascript
 // bad
-render() {
-  return <div>{this.props.name} {this.state.smiling ? "is smiling" : ""}</div>;
+renderSmilingStatement () {
+  return <strong>{(this.state.isSmiling) ? " is smiling." : ""}</strong>;
+},
+
+render () {
+  return <div>{this.props.name}{this.renderSmilingStatement()}</div>;
 }
 ```
 
 ```javascript
 // good
-renderSmilingStatement() {
-  if (this.state.isSmiling) {
-    return "is smiling";
-  }
-
-  return "";
-},
-
-render() {
-  return <div>{this.props.name} {this.renderSmilingStatement()}</div>;
+render () {
+  return (
+    <div>
+      {this.props.name}
+      {(this.state.smiling)
+        ? <span>is smiling</span>
+        : null
+      }
+    </div>
+  );
 }
 ```
+
 
 **[⬆ back to top](#table-of-contents)**
 
