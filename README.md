@@ -546,15 +546,11 @@ var Child = React.createClass({
 Use PropTypes to communicate expectations and log meaningful warnings.
 
 ```javascript
-var MyValidatedComponent = React.createClass({
-  propTypes: {
-    name: React.PropTypes.string
-  },
-
-  ...
-});
+MyValidatedComponent.propTypes = {
+  name: React.PropTypes.string
+};
 ```
-This component will log a warning if it receives `name` of a type other than `string`.
+`MyValidatedComponent` will log a warning if it receives `name` of a type other than `string`.
 
 
 ```html
@@ -562,16 +558,12 @@ This component will log a warning if it receives `name` of a type other than `st
 // Warning: Invalid prop `name` of type `number` supplied to `MyValidatedComponent`, expected `string`.
 ```
 
-Components may require `props`
+Components may also require `props`.
 
 ```javascript
-var MyValidatedComponent = React.createClass({
-  propTypes: {
-    name: React.PropTypes.string.isRequired
-  },
-
-  ...
-});
+MyValidatedComponent.propTypes = {
+  name: React.PropTypes.string.isRequired
+}
 ```
 
 This component will now validate the presence of name.
