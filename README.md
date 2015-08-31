@@ -143,16 +143,16 @@ Wrap props on newlines for exactly 2 or more.
 
 ## Computed Props
 
-Name computed prop methods with the `get` prefix.
+Use getters to name computed properties.
 
 ```javascript
   // bad
-  firstAndLastName() {
+  firstAndLastName () {
     return `${this.props.firstName} ${this.props.lastname}`;
   }
 
   // good
-  getFullName() {
+  get fullName () {
     return `${this.props.firstName} ${this.props.lastname}`;
   }
 ```
