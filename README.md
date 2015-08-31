@@ -217,7 +217,6 @@ render () {
 }
 ```
 
-
 **[⬆ back to top](#table-of-contents)**
 
 ## View Components
@@ -227,38 +226,35 @@ and domain components.
 
 ```javascript
 // bad
-var PeopleWrappedInBSRow = React.createClass({
-  render() {
+class PeopleWrappedInBSRow extends React.Component {
+  render () {
     return (
       <div className="row">
         <People people={this.state.people} />
       </div>
     );
   }
-});
+}
 ```
 
 ```javascript
 // good
-var BSRow = React.createClass({
-  render() {
+class BSRow extends React.Component {
+  render () {
     return <div className="row">{this.props.children}</div>;
   }
-});
+}
 
-var SomeView = React.createClass({
-  render() {
+class SomeView extends React.createClass {
+  render () {
     return (
       <BSRow>
         <People people={this.state.people} />
       </BSRow>
     );
   }
-});
+}
 ```
-
-This works nicely for complex components—like Tabs or Tables—where you you might
-need to iterate over children and place them within a complex layout.
 
 **[⬆ back to top](#table-of-contents)**
 
