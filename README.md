@@ -268,12 +268,12 @@ class SomeView extends React.createClass {
 ```javascript
 // CommentList.js
 
-var CommentList = React.createClass({
-  getInitialState() {
-    return { comments: [] }
-  },
+class CommentList extends React.Component {
+  getInitialState () {
+    return { comments: [] };
+  }
 
-  componentDidMount() {
+  componentDidMount () {
     $.ajax({
       url: "/my-comments.json",
       dataType: 'json',
@@ -281,16 +281,18 @@ var CommentList = React.createClass({
         this.setState({comments: comments});
       }.bind(this)
     });
-  },
-
-  render() {
-    return <ul> {this.state.comments.map(renderComment)} </ul>;
-  },
-
-  renderComment({body, author}) {
-    return <li>{body}—{author}</li>;
   }
-});
+
+  render () {
+    return (
+      <ul>
+        {this.state.comments.map(({body, author}) => {
+          return <li>{body}—{author}</li>;
+        })}
+      </ul>
+    );
+  }
+}
 ```
 
 #### Good
@@ -298,26 +300,28 @@ var CommentList = React.createClass({
 ```javascript
 // CommentList.js
 
-var CommentList = React.createClass({
+class CommentList extends React.Component {
   render() {
-    return <ul> {this.props.comments.map(renderComment)} </ul>;
-  },
-
-  renderComment({body, author}) {
-    return <li>{body}—{author}</li>;
+    return (
+      <ul>
+        {this.props.comments.map(({body, author}) => {
+          return <li>{body}—{author}</li>;
+        })}
+      </ul>
+    );
   }
-});
+}
 ```
 
 ```javascript
 // CommentListContainer.js
 
-var CommentListContainer = React.createClass({
-  getInitialState() {
+class CommentListContainer extends React.Component {
+  getInitialState () {
     return { comments: [] }
-  },
+  }
 
-  componentDidMount() {
+  componentDidMount () {
     $.ajax({
       url: "/my-comments.json",
       dataType: 'json',
@@ -325,12 +329,12 @@ var CommentListContainer = React.createClass({
         this.setState({comments: comments});
       }.bind(this)
     });
-  },
+  }
 
-  render() {
+  render () {
     return <CommentList comments={this.state.comments} />;
   }
-});
+}
 ```
 
 [Read more](https://medium.com/@learnreact/container-components-c0e67432e005)  
