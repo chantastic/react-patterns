@@ -478,19 +478,19 @@ Name the handler methods after their triggering event.
 
 ```javascript
 // bad
-punchABadger() {},
+punchABadger () { /*...*/ },
 
-render() {
-  return <div onClick={this.punchABadger}> ... </div>;
+render () {
+  return <div onClick={this.punchABadger} />;
 }
 ```
 
 ```javascript
 // good
-handleClick() {},
+handleClick () { /*...*/ },
 
-render() {
-  return <div onClick={this.handleClick}> ... </div>;
+render () {
+  return <div onClick={this.handleClick} />;
 }
 ```
 
@@ -502,8 +502,8 @@ Handler names should:
 
 If you need to disambiguate handlers, add additional information between
 `handle` and the event name. For example, you can distinguish between `onChange`
-handlers:  `handleNameChange` and `handleAgeChange`. If you do this, ask
-yourself if you should create another component class.
+handlers: `handleNameChange` and `handleAgeChange`. When you do this, ask
+yourself if you should be creating a new component.
 
 **[⬆ back to top](#table-of-contents)**
 
