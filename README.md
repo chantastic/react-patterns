@@ -411,11 +411,11 @@ See: [Compound State](#compound-state) pattern
 
 ## Existence Checking
 
-Do not check existence of `prop` objects.
+Do not check existence of `prop` objects. Use `defaultProps`.
 
 ```javascript
 // bad
-render() {
+render () {
   if (this.props.person) {
     return <div>{this.props.person.firstName}</div>;
   } else {
@@ -426,17 +426,17 @@ render() {
 
 ```javascript
 // good
-getDefaultProps() {
-  return {
-    person: {
-      firstName: 'Guest'
-    }
-  };
-},
-
-render() {
-  return <div>{this.props.person.firstName}</div>;
+class MyComponent extends React.Component {
+  render() {
+    return <div>{this.props.person.firstName}</div>;
+  }
 }
+
+MyComponent.defaultProps = {
+  person: {
+    firstName: 'Guest'
+  }
+};
 ```
 
 This is only where objects or arrays are used. Use PropTypes.shape to clarify
