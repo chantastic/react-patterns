@@ -116,8 +116,6 @@ Person.propTypes = {
 
 Wrap props on newlines for exactly 2 or more.
 
-(*Hint*: Don't separate props with commas)
-
 ```html
 // bad
 <Person
