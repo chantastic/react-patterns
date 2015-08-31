@@ -350,27 +350,30 @@ Do not keep state in `render`
 
 ```javascript
 // bad
-render() {
-  var name = 'Mrs. ' + this.props.name;
+render () {
+  var name = `Mrs. ${this.props.name}`;
+
   return <div>{name}</div>;
 }
 
 // good
-render() {
-  return <div>{'Mrs. ' + this.props.name}</div>;
+render () {
+  return <div>{`Mrs. ${this.props.name}`}</div>;
 }
 ```
 
 ```javascript
 // best
-getFancyName() {
+get fancyName () {
   return `Mrs. ${this.props.name}`;
-},
+}
 
-render() {
-  return <div>{this.getFancyName()}</div>;
+render () {
+  return <div>{this.fancyName}</div>;
 }
 ```
+
+*This is mostly stylistic and keeps diffs nice. I doubt that there's a significant perf reason to do this.*
 
 See: [Computed Props](#computed-props) pattern
 
