@@ -27,8 +27,8 @@ React
   1. [Using Entities](#using-entities)
 1. Gotchas
   1. [Tables](#tables)
-1. Add-ons
-  1. [ClassSet](#classset)
+1. Libraries
+  1. [classnames](#classnames)
 1. Other
   1. [JSX](#jsx)
   1. [ES6 Harmony](#es6-harmony)
@@ -632,41 +632,36 @@ insert new `tr`s into the `table` and confuse the heck out of you. Always use
 
 **[⬆ back to top](#table-of-contents)**
 
-## classSet
+## classnames
 
-**NOTE: the classSet addon has been deprecated. Use classNames instead on 
-[NPM](https://www.npmjs.com/package/classnames) and
-[Bower](https://github.com/JedWatson/classnames).**
-
-Use `classNames()` to manage conditional classes in your app:
+Use [classNames](https://www.npmjs.com/package/classnames) to manage conditional classes.
 
 ```javascript
 // bad
-render() {
-  var classes = ['MyComponent'];
+get classes () {
+  let classes = ['MyComponent'];
+
   if (this.state.active) {
     classes.push('MyComponent--active');
   }
 
-  return <div className={classes.join(' ')} />;
-},
-
-getClassName() {
-  var classes = ['MyComponent'];
-  if (this.state.active) {
-    classes.push('MyComponent--active');
-  }
   return classes.join(' ');
 }
 
+render () {
+  return <div className={this.classes} />;
+}
+```
+
+```javascript
 // good
-render() {
-  var classes = {
+render () {
+  let classes = {
     'MyComponent': true,
     'MyComponent--active': this.state.active
   };
 
-  <div className={classNames(classes)} />;
+  <div className={classnames(classes)} />;
 }
 ```
 
