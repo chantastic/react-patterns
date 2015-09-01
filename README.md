@@ -673,23 +673,19 @@ Read: [Class Name Manipulation](http://facebook.github.io/react/docs/class-name-
 
 We used to have some hardcore CoffeeScript lovers is the group. The unfortunate
 thing about writing templates in CoffeeScript is that it leaves you on the hook
-when certain implementations change that JSX would normally abstract.
+when certain implementations changes that JSX would normally abstract.
 
-We no longer recommend using CoffeeScript to write templates.
+We no longer recommend using CoffeeScript to write `render`.
 
-For posterity, you can read about how we used CoffeeScript for templates, when
-using CoffeeScript was non-negotiable: [CoffeeScript and JSX](https://slack-files.com/T024L9M0Y-F02HP4JM3-80d714).
+For posterity, you can read about how we used CoffeeScript, when using CoffeeScript was
+non-negotiable: [CoffeeScript and JSX](https://slack-files.com/T024L9M0Y-F02HP4JM3-80d714).
 
 **[⬆ back to top](#table-of-contents)**
 
-## ES6 Harmony
+## ES2015
 
-These examples use the
-[`harmony` option on react-rails](https://github.com/reactjs/react-rails#jsx)
-for ES6/ES2015 sugar. Examples use the `createClass` API over `React.Component`
-for consistency with the official documentation.
-
-ES6 implementation in jstransform is limited.
+[react-rails](https://github.com/reactjs/react-rails) now ships with [babel](babeljs.io). Anything
+you can do in Babel, you can do in Rails. See the documentation for additional config.
 
 **[⬆ back to top](#table-of-contents)**
 
