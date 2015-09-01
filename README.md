@@ -351,7 +351,7 @@ Do not keep state in `render`
 ```javascript
 // bad
 render () {
-  var name = `Mrs. ${this.props.name}`;
+  let name = `Mrs. ${this.props.name}`;
 
   return <div>{name}</div>;
 }
@@ -509,34 +509,28 @@ yourself if you should be creating a new component.
 
 ## Naming Events
 
-Use custom event names for components Parent-Child event listeners.
+Use custom event names for ownee events.
 
 ```javascript
-var Parent = React.createClass({
-  handleCry() {
-    // handle Child's cry
-  },
-
-  render() {
-    return (
-      <div className="Parent">
-        <Child onCry={this.handleCry} />
-      </div>
-    );
+class Owner extends React.Component {
+  handleDelete () {
+    // handle Ownee's onDelete event
   }
-});
 
-var Child = React.createClass({
-  render() {
-    return (
-      <div
-       className="Child"
-       onChange={this.props.onCry}>
-        ...
-      </div>
-    );
+  render () {
+    return <Ownee onDelete={this.handleDelete} />;
   }
-});
+}
+
+class Ownee extends React.Component {
+  render () {
+    return <div onChange={this.props.onDelete} />;
+  }
+}
+
+Ownee.propTypes = {
+  onDelete: React.PropTypes.func.isRequired
+};
 ```
 
 **[⬆ back to top](#table-of-contents)**
