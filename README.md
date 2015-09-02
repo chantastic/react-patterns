@@ -12,7 +12,7 @@ React
 1. Patterns
   1. [Computed Props](#computed-props)
   1. [Compound State](#compound-state)
-  1. [Sub-render](#sub-render)
+  1. [prefer-ternary-to-sub-render](#prefer-ternary-to-sub-render)
   1. [View Components](#view-components)
   1. [Container Components](#container-components)
 1. Anti-patterns
@@ -27,8 +27,8 @@ React
   1. [Using Entities](#using-entities)
 1. Gotchas
   1. [Tables](#tables)
-1. Add-ons
-  1. [ClassSet](#classset)
+1. Libraries
+  1. [classnames](#classnames)
 1. Other
   1. [JSX](#jsx)
   1. [ES6 Harmony](#es6-harmony)
@@ -45,86 +45,69 @@ We've struggled to find the happy path. Recommendations here represent a good
 number of failed attempts. If something seems out of place, it probably is;
 let us know what you've found.
 
+All examples written in ES2015 syntax now that the
+[official react-rails gem](https://github.com/reactjs/react-rails) ships with
+[babel](http://babeljs.io/).
+
 **[⬆ back to top](#table-of-contents)**
 
 ---
 
 ## Component Organization
 
-Group methods into logical groups.
-
-* propTypes
-* get methods
-* state methods
-* lifecycle events
-* event handlers
-* "private" methods
-* render
+* class definition
+  * constructor
+    * event handlers
+  * 'component' lifecycle events
+  * getters
+  * render
+* defaultProps
+* proptypes
 
 ```javascript
-var Person = React.createClass({
-  propTypes: {
-    name: React.PropTypes.string
-  },
+class Person extends React.Component {
+  constructor (props) {
+    super(props);
 
-  getInitialState() {
-    return {
-      smiling: false
+    this.state = { smiling: false };
+
+    this.handleClick = () => {
+      this.setState({smiling: !this.state.smiling});
     };
-  },
+  }
 
-  getDefaultProps() {
-    return {
-      name: 'Guest'
-    };
-  },
-
-  componentWillMount() {
+  componentWillMount () {
     // add event listeners (Flux Store, WebSocket, document, etc.)
   },
 
-  componentDidMount() {
+  componentDidMount () {
     // React.getDOMNode()
   },
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     // remove event listeners (Flux Store, WebSocket, document, etc.)
   },
 
-  handleClick() {
-    this.setState({smiling: !this.state.smiling});
-  },
+  get smilingMessage () {
+    return (this.state.smiling) ? "is smiling" : "";
+  }
 
-  _doSomethingGross() {
-    // These really aren't private but it's a sign the method could stand
-    // improvement or has unideal implementation.
-  },
-
-  render() {
+  render () {
     return (
-      <div
-       className="Person"
-       onClick={this.handleClick}>
-        {this.props.name} {this.state.smiling ? "is smiling" : ""}
+      <div onClick={this.handleClick}>
+        {this.props.name} {this.smilingMessage}
       </div>
     );
   },
+}
 
-});
-```
+Person.defaultProps = {
+  name: 'Guest'
+};
 
-Place `get` methods ([computed props](#computed-props)) after React's `getInitialState` and `getDefaultProps`.
-
-Place `has`/`is`/`can` methods ([compound state](#compound-state)) after that, respectively.
-
-```javascript
-var Person = React.createClass({
-  getInitialState() {},
-  getDefaultProps() {},
-  getFormattedBirthDate() {},
-  hasHighExpectations() {},
-  isLikelyToBeDissapointedWithSurprisePartyEfforts() {}
-});
+Person.propTypes = {
+  name: React.PropTypes.string
+};
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -132,8 +115,6 @@ var Person = React.createClass({
 ## Formatting Props
 
 Wrap props on newlines for exactly 2 or more.
-
-(*Hint*: Don't separate props with commas)
 
 ```html
 // bad
@@ -162,16 +143,16 @@ Wrap props on newlines for exactly 2 or more.
 
 ## Computed Props
 
-Name computed prop methods with the `get` prefix.
+Use getters to name computed properties.
 
 ```javascript
   // bad
-  firstAndLastName() {
+  firstAndLastName () {
     return `${this.props.firstName} ${this.props.lastname}`;
   }
 
   // good
-  getFullName() {
+  get fullName () {
     return `${this.props.firstName} ${this.props.lastname}`;
   }
 ```
@@ -184,59 +165,55 @@ See: [Cached State in render](#cached-state-in-render) anti-pattern
 
 ## Compound State
 
-Name compound state methods with the `is`, `has` or `can` prefix.
+Prefix compound state getters with a verb for readability.
 
 ```javascript
 // bad
-happyAndKnowsIt() {
+happyAndKnowsIt () {
   return this.state.happy && this.state.knowsIt;
 }
 ```
 
 ```javascript
 // good
-isWillingSongParticipant() {
+get isHappyAndKnowsIt () {
   return this.state.happy && this.state.knowsIt;
-},
-
-hasWorrysomeBehavior() {
-  return !this.isWillingSongParticipant() && this.props.punchesKittens;
-},
-
-canPetKittens() {
-  return this.hasHands() && this.props.kittens.length;
 }
 ```
 
-These methods should return a `boolean` value.
+These methods *MUST* return a `boolean` value.
 
 See: [Compound Conditions](#compound-conditions) anti-pattern
 
 **[⬆ back to top](#table-of-contents)**
 
-## Sub-render
+## Prefer Ternary to Sub-render
 
-Use sub-`render` methods to isolate logical chunks of component UI.
+Keep login inside the `render`.
 
 ```javascript
 // bad
-render() {
-  return <div>{this.props.name} {this.state.smiling ? "is smiling" : ""}</div>;
+renderSmilingStatement () {
+  return <strong>{(this.state.isSmiling) ? " is smiling." : ""}</strong>;
+},
+
+render () {
+  return <div>{this.props.name}{this.renderSmilingStatement()}</div>;
 }
 ```
 
 ```javascript
 // good
-renderSmilingStatement() {
-  if (this.state.isSmiling) {
-    return "is smiling";
-  }
-
-  return "";
-},
-
-render() {
-  return <div>{this.props.name} {this.renderSmilingStatement()}</div>;
+render () {
+  return (
+    <div>
+      {this.props.name}
+      {(this.state.smiling)
+        ? <span>is smiling</span>
+        : null
+      }
+    </div>
+  );
 }
 ```
 
@@ -249,38 +226,35 @@ and domain components.
 
 ```javascript
 // bad
-var PeopleWrappedInBSRow = React.createClass({
-  render() {
+class PeopleWrappedInBSRow extends React.Component {
+  render () {
     return (
       <div className="row">
         <People people={this.state.people} />
       </div>
     );
   }
-});
+}
 ```
 
 ```javascript
 // good
-var BSRow = React.createClass({
-  render() {
+class BSRow extends React.Component {
+  render () {
     return <div className="row">{this.props.children}</div>;
   }
-});
+}
 
-var SomeView = React.createClass({
-  render() {
+class SomeView extends React.createClass {
+  render () {
     return (
       <BSRow>
         <People people={this.state.people} />
       </BSRow>
     );
   }
-});
+}
 ```
-
-This works nicely for complex components—like Tabs or Tables—where you you might
-need to iterate over children and place them within a complex layout.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -294,12 +268,12 @@ need to iterate over children and place them within a complex layout.
 ```javascript
 // CommentList.js
 
-var CommentList = React.createClass({
-  getInitialState() {
-    return { comments: [] }
-  },
+class CommentList extends React.Component {
+  getInitialState () {
+    return { comments: [] };
+  }
 
-  componentDidMount() {
+  componentDidMount () {
     $.ajax({
       url: "/my-comments.json",
       dataType: 'json',
@@ -307,16 +281,18 @@ var CommentList = React.createClass({
         this.setState({comments: comments});
       }.bind(this)
     });
-  },
-
-  render() {
-    return <ul> {this.state.comments.map(renderComment)} </ul>;
-  },
-
-  renderComment({body, author}) {
-    return <li>{body}—{author}</li>;
   }
-});
+
+  render () {
+    return (
+      <ul>
+        {this.state.comments.map(({body, author}) => {
+          return <li>{body}—{author}</li>;
+        })}
+      </ul>
+    );
+  }
+}
 ```
 
 #### Good
@@ -324,26 +300,28 @@ var CommentList = React.createClass({
 ```javascript
 // CommentList.js
 
-var CommentList = React.createClass({
+class CommentList extends React.Component {
   render() {
-    return <ul> {this.props.comments.map(renderComment)} </ul>;
-  },
-
-  renderComment({body, author}) {
-    return <li>{body}—{author}</li>;
+    return (
+      <ul>
+        {this.props.comments.map(({body, author}) => {
+          return <li>{body}—{author}</li>;
+        })}
+      </ul>
+    );
   }
-});
+}
 ```
 
 ```javascript
 // CommentListContainer.js
 
-var CommentListContainer = React.createClass({
-  getInitialState() {
+class CommentListContainer extends React.Component {
+  getInitialState () {
     return { comments: [] }
-  },
+  }
 
-  componentDidMount() {
+  componentDidMount () {
     $.ajax({
       url: "/my-comments.json",
       dataType: 'json',
@@ -351,12 +329,12 @@ var CommentListContainer = React.createClass({
         this.setState({comments: comments});
       }.bind(this)
     });
-  },
+  }
 
-  render() {
+  render () {
     return <CommentList comments={this.state.comments} />;
   }
-});
+}
 ```
 
 [Read more](https://medium.com/@learnreact/container-components-c0e67432e005)  
@@ -372,27 +350,30 @@ Do not keep state in `render`
 
 ```javascript
 // bad
-render() {
-  var name = 'Mrs. ' + this.props.name;
+render () {
+  let name = `Mrs. ${this.props.name}`;
+
   return <div>{name}</div>;
 }
 
 // good
-render() {
-  return <div>{'Mrs. ' + this.props.name}</div>;
+render () {
+  return <div>{`Mrs. ${this.props.name}`}</div>;
 }
 ```
 
 ```javascript
 // best
-getFancyName() {
+get fancyName () {
   return `Mrs. ${this.props.name}`;
-},
+}
 
-render() {
-  return <div>{this.getFancyName()}</div>;
+render () {
+  return <div>{this.fancyName}</div>;
 }
 ```
+
+*This is mostly stylistic and keeps diffs nice. I doubt that there's a significant perf reason to do this.*
 
 See: [Computed Props](#computed-props) pattern
 
@@ -400,41 +381,23 @@ See: [Computed Props](#computed-props) pattern
 
 ## Compound Conditions
 
-Do not put compound conditions in `render`.
+Don't put compound conditions in `render`.
 
 ```javascript
 // bad
-render() {
-  return <div>{if (this.state.happy && this.state.knowsIt) { return "Clapping
-hands" }</div>;
+render () {
+  return <div>{if (this.state.happy && this.state.knowsIt) { return "Clapping hands" }</div>;
 }
 ```
 
 ```javascript
 // better
-isTotallyHappy() {
+get isTotesHappy() {
   return this.state.happy && this.state.knowsIt;
 },
 
 render() {
-  return <div>{if (this.isTotallyHappy() { return "Clapping hands" }}</div>;
-}
-```
-
-```javascript
-// betterer
-getHappinessMessage() {
-  if (this.isTotallyHappy()) {
-    return "Clapping hands";
-  }
-},
-
-isTotallyHappy() {
-  return this.state.happy && this.state.knowsIt;
-},
-
-render() {
-  return <div>{this.getHappinessMessage()}</div>;
+  return <div>{(this.isTotesHappy && "Clapping hands" }</div>;
 }
 ```
 
@@ -448,11 +411,11 @@ See: [Compound State](#compound-state) pattern
 
 ## Existence Checking
 
-Do not check existence of `prop` objects.
+Do not check existence of `prop` objects. Use `defaultProps`.
 
 ```javascript
 // bad
-render() {
+render () {
   if (this.props.person) {
     return <div>{this.props.person.firstName}</div>;
   } else {
@@ -463,17 +426,17 @@ render() {
 
 ```javascript
 // good
-getDefaultProps() {
-  return {
-    person: {
-      firstName: 'Guest'
-    }
-  };
-},
-
-render() {
-  return <div>{this.props.person.firstName}</div>;
+class MyComponent extends React.Component {
+  render() {
+    return <div>{this.props.person.firstName}</div>;
+  }
 }
+
+MyComponent.defaultProps = {
+  person: {
+    firstName: 'Guest'
+  }
+};
 ```
 
 This is only where objects or arrays are used. Use PropTypes.shape to clarify
@@ -487,11 +450,7 @@ Do not set state from props without obvious intent.
 
 ```javascript
 // bad
-propTypes: {
-  items: React.PropTypes.array
-},
-
-getInitialState() {
+getInitialState () {
   return {
     items: this.props.items
   };
@@ -500,11 +459,7 @@ getInitialState() {
 
 ```javascript
 // good
-propTypes: {
-  initialItems: React.PropTypes.array
-},
-
-getInitialState() {
+getInitialState () {
   return {
     items: this.props.initialItems
   };
@@ -523,19 +478,19 @@ Name the handler methods after their triggering event.
 
 ```javascript
 // bad
-punchABadger() {},
+punchABadger () { /*...*/ },
 
-render() {
-  return <div onClick={this.punchABadger}> ... </div>;
+render () {
+  return <div onClick={this.punchABadger} />;
 }
 ```
 
 ```javascript
 // good
-handleClick() {},
+handleClick () { /*...*/ },
 
-render() {
-  return <div onClick={this.handleClick}> ... </div>;
+render () {
+  return <div onClick={this.handleClick} />;
 }
 ```
 
@@ -547,41 +502,35 @@ Handler names should:
 
 If you need to disambiguate handlers, add additional information between
 `handle` and the event name. For example, you can distinguish between `onChange`
-handlers:  `handleNameChange` and `handleAgeChange`. If you do this, ask
-yourself if you should create another component class.
+handlers: `handleNameChange` and `handleAgeChange`. When you do this, ask
+yourself if you should be creating a new component.
 
 **[⬆ back to top](#table-of-contents)**
 
 ## Naming Events
 
-Use custom event names for components Parent-Child event listeners.
+Use custom event names for ownee events.
 
 ```javascript
-var Parent = React.createClass({
-  handleCry() {
-    // handle Child's cry
-  },
-
-  render() {
-    return (
-      <div className="Parent">
-        <Child onCry={this.handleCry} />
-      </div>
-    );
+class Owner extends React.Component {
+  handleDelete () {
+    // handle Ownee's onDelete event
   }
-});
 
-var Child = React.createClass({
-  render() {
-    return (
-      <div
-       className="Child"
-       onChange={this.props.onCry}>
-        ...
-      </div>
-    );
+  render () {
+    return <Ownee onDelete={this.handleDelete} />;
   }
-});
+}
+
+class Ownee extends React.Component {
+  render () {
+    return <div onChange={this.props.onDelete} />;
+  }
+}
+
+Ownee.propTypes = {
+  onDelete: React.PropTypes.func.isRequired
+};
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -591,15 +540,11 @@ var Child = React.createClass({
 Use PropTypes to communicate expectations and log meaningful warnings.
 
 ```javascript
-var MyValidatedComponent = React.createClass({
-  propTypes: {
-    name: React.PropTypes.string
-  },
-
-  ...
-});
+MyValidatedComponent.propTypes = {
+  name: React.PropTypes.string
+};
 ```
-This component will log a warning if it receives `name` of a type other than `string`.
+`MyValidatedComponent` will log a warning if it receives `name` of a type other than `string`.
 
 
 ```html
@@ -607,16 +552,12 @@ This component will log a warning if it receives `name` of a type other than `st
 // Warning: Invalid prop `name` of type `number` supplied to `MyValidatedComponent`, expected `string`.
 ```
 
-Components may require `props`
+Components may also require `props`.
 
 ```javascript
-var MyValidatedComponent = React.createClass({
-  propTypes: {
-    name: React.PropTypes.string.isRequired
-  },
-
-  ...
-});
+MyValidatedComponent.propTypes = {
+  name: React.PropTypes.string.isRequired
+}
 ```
 
 This component will now validate the presence of name.
@@ -654,12 +595,12 @@ Read: [JSX Gotchas](http://facebook.github.io/react/docs/jsx-gotchas.html#html-e
 
 ## Tables
 
-The browser thinks you're dumb. But React doesn't. Always use `tbody` in your
+The browser thinks you're dumb. But React doesn't. Always use `tbody` in
 `table` components.
 
 ```javascript
 // bad
-render() {
+render () {
   return (
     <table>
       <tr>...</tr>
@@ -668,7 +609,7 @@ render() {
 }
 
 // good
-render() {
+render () {
   return (
     <table>
       <tbody>
@@ -685,41 +626,36 @@ insert new `tr`s into the `table` and confuse the heck out of you. Always use
 
 **[⬆ back to top](#table-of-contents)**
 
-## classSet
+## classnames
 
-**NOTE: the classSet addon has been deprecated. Use classNames instead on 
-[NPM](https://www.npmjs.com/package/classnames) and
-[Bower](https://github.com/JedWatson/classnames).**
-
-Use `classNames()` to manage conditional classes in your app:
+Use [classNames](https://www.npmjs.com/package/classnames) to manage conditional classes.
 
 ```javascript
 // bad
-render() {
-  var classes = ['MyComponent'];
+get classes () {
+  let classes = ['MyComponent'];
+
   if (this.state.active) {
     classes.push('MyComponent--active');
   }
 
-  return <div className={classes.join(' ')} />;
-},
-
-getClassName() {
-  var classes = ['MyComponent'];
-  if (this.state.active) {
-    classes.push('MyComponent--active');
-  }
   return classes.join(' ');
 }
 
+render () {
+  return <div className={this.classes} />;
+}
+```
+
+```javascript
 // good
-render() {
-  var classes = {
+render () {
+  let classes = {
     'MyComponent': true,
     'MyComponent--active': this.state.active
   };
 
-  <div className={classNames(classes)} />;
+  <div className={classnames(classes)} />;
 }
 ```
 
@@ -731,23 +667,19 @@ Read: [Class Name Manipulation](http://facebook.github.io/react/docs/class-name-
 
 We used to have some hardcore CoffeeScript lovers is the group. The unfortunate
 thing about writing templates in CoffeeScript is that it leaves you on the hook
-when certain implementations change that JSX would normally abstract.
+when certain implementations changes that JSX would normally abstract.
 
-We no longer recommend using CoffeeScript to write templates.
+We no longer recommend using CoffeeScript to write `render`.
 
-For posterity, you can read about how we used CoffeeScript for templates, when
-using CoffeeScript was non-negotiable: [CoffeeScript and JSX](https://slack-files.com/T024L9M0Y-F02HP4JM3-80d714).
+For posterity, you can read about how we used CoffeeScript, when using CoffeeScript was
+non-negotiable: [CoffeeScript and JSX](https://slack-files.com/T024L9M0Y-F02HP4JM3-80d714).
 
 **[⬆ back to top](#table-of-contents)**
 
-## ES6 Harmony
+## ES2015
 
-These examples use the
-[`harmony` option on react-rails](https://github.com/reactjs/react-rails#jsx)
-for ES6/ES2015 sugar. Examples use the `createClass` API over `React.Component`
-for consistency with the official documentation.
-
-ES6 implementation in jstransform is limited.
+[react-rails](https://github.com/reactjs/react-rails) now ships with [babel](babeljs.io). Anything
+you can do in Babel, you can do in Rails. See the documentation for additional config.
 
 **[⬆ back to top](#table-of-contents)**
 
