@@ -397,7 +397,7 @@ get isTotesHappy() {
 },
 
 render() {
-  return <div>{(this.isTotesHappy && "Clapping hands" }</div>;
+  return <div>{(this.isTotesHappy) && "Clapping hands"}</div>;
 }
 ```
 
