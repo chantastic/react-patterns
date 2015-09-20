@@ -655,7 +655,7 @@ render () {
     'MyComponent--active': this.state.active
   };
 
-  <div className={classnames(classes)} />;
+  return <div className={classnames(classes)} />;
 }
 ```
 
