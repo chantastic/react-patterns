@@ -31,7 +31,7 @@ React
   1. [classnames](#classnames)
 1. Other
   1. [JSX](#jsx)
-  1. [ES6 Harmony](#es6-harmony)
+  1. [ES2015](#es2015)
   1. [react-rails](#react-rails)
   1. [rails-assets](#rails-assets)
   1. [flux](#flux)
