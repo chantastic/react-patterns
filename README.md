@@ -699,8 +699,8 @@ Bundler and react-assets.
 
 **caveats: rails-assets gives you access to bower projects via Sprockets
 requires. This is a win for the traditionally hand-wavy approach that Rails
-takes with JavaScript. This approach does buy you modularity or the ability to
-interop with JS tooling that requires modularity.**
+takes with JavaScript. This approach doesn't buy you modularity or the ability to
+interop with JS tooling that requires modules.**
 
 **[⬆ back to top](#table-of-contents)**
 
