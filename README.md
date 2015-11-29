@@ -245,7 +245,7 @@ class BSRow extends React.Component {
   }
 }
 
-class SomeView extends React.createClass {
+class SomeView extends React.Component {
   render () {
     return (
       <BSRow>
