@@ -659,7 +659,7 @@ render () {
 }
 ```
 
-Read: [Class Name Manipulation](http://facebook.github.io/react/docs/class-name-manipulation.html)
+Read: [Class Name Manipulation](https://github.com/JedWatson/classnames/blob/master/README.md)
 
 **[⬆ back to top](#table-of-contents)**
 
