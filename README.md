@@ -78,15 +78,15 @@ class Person extends React.Component {
 
   componentWillMount () {
     // add event listeners (Flux Store, WebSocket, document, etc.)
-  },
+  }
 
   componentDidMount () {
     // React.getDOMNode()
-  },
+  }
 
   componentWillUnmount () {
     // remove event listeners (Flux Store, WebSocket, document, etc.)
-  },
+  }
 
   get smilingMessage () {
     return (this.state.smiling) ? "is smiling" : "";
@@ -98,7 +98,7 @@ class Person extends React.Component {
         {this.props.name} {this.smilingMessage}
       </div>
     );
-  },
+  }
 }
 
 Person.defaultProps = {
