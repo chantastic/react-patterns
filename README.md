@@ -411,32 +411,42 @@ See: [Compound State](#compound-state) pattern
 
 ## Existence Checking
 
-Do not check existence of `prop` objects. Use `defaultProps`.
+Do not check existence of props at the root of a component.
+Componenst should not have two possible return types.
 
 ```javascript
 // bad
-render () {
-  if (this.props.person) {
-    return <div>{this.props.person.firstName}</div>;
-  } else {
-    return null;
-  }
+const Person = props => {
+  if (this.props.firstName)
+    return <div>{this.props.firstName}</div>
+  else
+    return null
 }
 ```
 
-```javascript
-// good
-class MyComponent extends React.Component {
-  render() {
-    return <div>{this.props.person.firstName}</div>;
-  }
-}
+Componenents should *always* render. Consider adding `defaultProps`, where a sensible default is appropriate.
 
-MyComponent.defaultProps = {
-  person: {
-    firstName: 'Guest'
-  }
-};
+```javascript
+// better
+const Person = props =>
+  <div>{this.props.firstName}</div>
+
+Person.defaultProps = {
+  firstName: "Guest"
+}
+```
+
+If a component should be conditionally rendered, handle that in the owner component.
+
+```javascript
+// best
+const TheOwnerComponent = props =>
+  <div>
+    {props.person
+      ? <Person {...props.person} />
+      : null
+    }
+  </div>
 ```
 
 This is only where objects or arrays are used. Use PropTypes.shape to clarify
