@@ -412,7 +412,7 @@ See: [Compound State](#compound-state) pattern
 ## Existence Checking
 
 Do not check existence of props at the root of a component.
-Componenst should not have two possible return types.
+Components should not have two possible return types.
 
 ```javascript
 // bad
@@ -442,10 +442,7 @@ If a component should be conditionally rendered, handle that in the owner compon
 // best
 const TheOwnerComponent = props =>
   <div>
-    {props.person
-      ? <Person {...props.person} />
-      : null
-    }
+    {props.person && <Person {...props.person} />}
   </div>
 ```
 
