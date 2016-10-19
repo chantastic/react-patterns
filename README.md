@@ -424,7 +424,7 @@ const Person = props => {
 }
 ```
 
-Componenents should *always* render. Consider adding `defaultProps`, where a sensible default is appropriate.
+Components should *always* render. Consider adding `defaultProps`, where a sensible default is appropriate.
 
 ```javascript
 // better
