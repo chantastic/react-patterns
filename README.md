@@ -189,7 +189,7 @@ See: [Compound Conditions](#compound-conditions) anti-pattern
 
 ## Prefer Ternary to Sub-render
 
-Keep login inside the `render`.
+Keep logic inside the `render` function.
 
 ```javascript
 // bad
