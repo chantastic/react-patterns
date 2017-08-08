@@ -148,12 +148,12 @@ Use getters to name computed properties.
 ```javascript
   // bad
   firstAndLastName () {
-    return `${this.props.firstName} ${this.props.lastname}`;
+    return `${this.props.firstName} ${this.props.lastName}`;
   }
 
   // good
   get fullName () {
-    return `${this.props.firstName} ${this.props.lastname}`;
+    return `${this.props.firstName} ${this.props.lastName}`;
   }
 ```
 
