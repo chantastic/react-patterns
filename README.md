@@ -1,3 +1,10 @@
+NO LONGER MAINTAINED  
+===
+Moved and updated at [reactpatterns.com](https://reactpatterns.com).
+Thanks for your help in developing this into the site.
+
+---
+
 React
 =====
 
